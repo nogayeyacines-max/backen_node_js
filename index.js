@@ -8,7 +8,12 @@ dotenv.config();
 const app = express();
 connectBD();
 
-app.use(cors({ origin: "*" }));  // ← EN PREMIER
+app.use(cors({ origin:
+    [
+"http://localhost:5173/", //url_react
+"https://front-node-one.vercel.app" // url_vercel
+    ] 
+}));  
 app.use(express.json());
 
 const PORT = process.env.PORT;
