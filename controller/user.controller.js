@@ -6,74 +6,61 @@ exports.inscription = async (req, res) => {
     try {
         const {prenom, nom, email, password} = req.body;
 
-        // verifier si l'utilisateur existe
         let existingUser = await User.findOne({email});
-
         if(existingUser){
-            return res.status(400).json({message: "utilisateur existe deja"});
+            return res.status(400).json({message: "Utilisateur existe déjà"});
         }
 
-        // hasher le password
         const verifier = await bcrypt.genSalt(10);
         const hashagePassword = await bcrypt.hash(password, verifier);
 
-        // creer l'utilisateur
-        const newUser = await User.create({
+        await User.create({
             prenom,
             nom,
             email,
             password: hashagePassword
         });
 
-        res.status(201).json({message: "inscription reussie"});
-        console.log('inscription reussie');
+        res.status(201).json({message: "Inscription réussie"});
 
     } catch (error) {
         res.status(500).json(error);
-        console.log(error)
+        console.log(error);
     }
 }
 
-// fonction de connexion
-
-exports.connexion = async (req , res) => {
-
+exports.connexion = async (req, res) => {
     try {
-        const {email , password} = req.body ;
+        const {email, password} = req.body;
 
-        // verification de l'email
-        const user = await User.findOne({email}) ;
+        const user = await User.findOne({email});
         if(!user){
-            return res.status(400).json({message : 'utilisateur introuvable'});
-        }
-        // verification du password
-        const correspond = await bcrypt.compare(password , user.password) ;
-        if(!correspond){
-            return res.status(400).json({message : 'mots de passe incorrect'});
+            return res.status(400).json({message: 'Utilisateur introuvable'});
         }
 
-        // generer un token
+        const correspond = await bcrypt.compare(password, user.password);
+        if(!correspond){
+            return res.status(400).json({message: 'Mot de passe incorrect'});
+        }
+
         const token = jwt.sign(
-            { id: user._},
-            process.env.JWT_SECRET ,
-            { expiresIn : "1d" }
+            { id: user._id },              // ✅ correction : user._ → user._id
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
         );
 
         res.json({
-            token ,
-            user :{
-                id: user._id ,
-                prenom : user.prenom ,
-                nom : user.nom ,
-                email : user.email ,
+            token,
+            user: {
+                id: user._id,
+                prenom: user.prenom,
+                nom: user.nom,
+                email: user.email,
             }
         });
 
-
     } catch (error) {
-        res.status(500).json(error)
+        res.status(500).json(error);
         console.log(error);
-
     }
-
 }
