@@ -8,12 +8,7 @@ dotenv.config();
 const app = express();
 connectBD();
 
-app.use(cors({
-  origin: [
-    "http://localhost:5173",              
-    "https://front-node-one.vercel.app" 
-  ]
-}));
+app.use(cors());
 
 app.use(express.json());
 
