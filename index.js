@@ -14,7 +14,8 @@ connectBD();
 
 app.use(cors({
   origin: [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://front-node-fy6c.vercel.app"
   ]
   
 }));
